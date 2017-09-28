@@ -213,7 +213,7 @@
             });
         });
     }
-    function startGameFromServer(){
+    function startGameFromServer(){//unused, not working right now, might be useful if the game gets put on a server.
         path1 = document.getElementById("team0").files[0];
         path2 = document.getElementById("team1").files[0];
         loadJS(path1,customTeamClassBinder,document.body,{team:0,scope:$}).then(function () {
