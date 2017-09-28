@@ -22,24 +22,24 @@ once you are done writing you AI (or you want to test it), open index.html, sele
 
 the players and the ball always move on the field with a given speed (the number of units that entity moves per frame) and the coordinates start at (0,0) in the top left corner, this means that moving with positive x speed means moving to the right, negative x speed means left, positive y means down and negative y means up.
 
-The objective of each team is (obviously i would say) to put the ball in their opponents goal, and defend their one.
-The goals are placed at `x = 0` and `x = MAXX` (the left and right edges of the field), and their width and Y coordinates are supplied in the variables `GOALSIZE` and `GOALCOORDINATES`.
+The objective of each team is (obviously i would say) to put the ball in their opponents goal, and defend their one.  
+The goals are placed at `x = 0` and `x = MAXX` (the left and right edges of the field), and their width and Y coordinates are supplied in the variables `GOALSIZE` and `GOALCOORDINATES`.  
 Team0 starts in the left side of the field must defend the goal at `x = 0` and score in the goal at `x = MAXX`, team1 starts on the right side of the field and... you get it.
 
 ### turns and what you can do
 in DevSoccer each frame every player decides what he should do next. A player can increase/decrease his speed  in a given direction and try to kick the ball simultaneously.
 
-Kicking the ball means to set its exact speed and a player can do that only if is close enough to the ball (the distance from the player to the ball should be less than the value set in the match variable `INFLUENCEZONE`, except for the goalkeeper which i'll talk about later).
-To try kick the ball a player should set at least one between `ball.speedX` and `ball.speedY` in the `turn()` return object.
-If more than a player tries to kick the ball in the same frame, the successful kick will be selected at random between all of kick attempts, the closer a player is to the ball, the highest is the probability of his kick to succeed over the others.
-Regardless of how many try to kick the ball there will always be a probability of missing the ball.
-The ball's speed also decays over time if noone kicks it.
+Kicking the ball means to set its exact speed and a player can do that only if is close enough to the ball (the distance from the player to the ball should be less than the value set in the match variable `INFLUENCEZONE`, except for the goalkeeper which i'll talk about later).  
+To try kick the ball a player should set at least one between `ball.speedX` and `ball.speedY` in the `turn()` return object.  
+If more than a player tries to kick the ball in the same frame, the successful kick will be selected at random between all of kick attempts, the closer a player is to the ball, the highest is the probability of his kick to succeed over the others.  
+Regardless of how many try to kick the ball there will always be a probability of missing the ball.  
+The ball's speed also decays over time if noone kicks it.  
 If the ball is kicked against the border of the field, it will be simply bounced off it, as if there was a wall
 
-Moving the players is a different story. A player cannot go from standing to his top speed in just a frame, nor can it invert his direction alltogether while mantaining full speed, that's why, for each turn a player can only modify his speed by a certain amount.
-To modify the speed of a player, you should set at least one between `player.deltaSpeedX` and `player.deltaSpeedY` in the `turn()` return object.
-If both of them are left 0, the speed of the player will remain the same as the previous frame. 
-The maximum variation each player can apply to his speed each turn is defined in the match variable `MAXVARIATION`, while the maximum speed he can achieve is defined in the variable `MAXSPEED`
+Moving the players is a different story. A player cannot go from standing to his top speed in just a frame, nor can it invert his direction alltogether while mantaining full speed, that's why, for each turn a player can only modify his speed by a certain amount.  
+To modify the speed of a player, you should set at least one between `player.deltaSpeedX` and `player.deltaSpeedY` in the `turn()` return object.  
+If both of them are left 0, the speed of the player will remain the same as the previous frame.   
+The maximum variation each player can apply to his speed each turn is defined in the match variable `MAXVARIATION`, while the maximum speed he can achieve is defined in the variable `MAXSPEED`  
 If a player tries to move outside the field... he moves out of the field. please try not to overflow the coordinate variables :blue_heart:
 
 ### the Goalkeeper
@@ -77,15 +77,15 @@ this paragraph describes in detail what's in the two objects passed to your func
 # Notes
 this sections contains a set of rules and clarification which are not included in the Instructions section
 
-### Positions
-At the beginning of the game, the function init() is called one time for each instance of your player. it should return an array with an X and an Y coordinates which should be a valid starting position for that team.
-all the positions should be inside the playing field, so both the coordinates will have to be greater than 0, and smaller than the maximum size for that axis.
-team0 should begin in the left side of the field, so the the X coordinate should comply with `x<MAXX/2`, on the other hand, the team1 starting X coordinate should be `x>MAXX` because they start on the right side of the field.
+### Initial positions
+At the beginning of the game, the function init() is called one time for each instance of your player. it should return an array with an X and an Y coordinates which should be a valid starting position for that team.  
+All the positions should be inside the playing field, so both the coordinates will have to be greater than 0, and smaller than the maximum size for that axis.  
+Team0 should begin in the left side of the field, so the the X coordinate should comply with `x<MAXX/2`, on the other hand, the team1 starting X coordinate should be `x>MAXX` because they start on the right side of the field.  
 Please always make sure that your Prototype is able to return correct positions for both sides, otherwise, when someone tries to challenge your AI and uses your file on the other team, the match could not start.
 
 ### Oblique speed
-right now there's no check on the actual speed the players are at. they can simply move up to `MAXSPEED` on the x axis and up to `MAXSPEED`on the Y axis in the same frame. that means that moving at full speed in oblique direction is actually faster than going full speed while only moving on an axis. this will be probably fixed sooner or later.
-the same as above applies to the ball, with `MAXBALLSPEED`
+right now there's no check on the actual speed the players are at. they can simply move up to `MAXSPEED` on the x axis and up to `MAXSPEED`on the Y axis in the same frame. that means that moving at full speed in oblique direction is actually faster than going full speed while only moving on an axis. this will be probably fixed sooner or later.  
+The same as above applies to the ball, with `MAXBALLSPEED`
 
 # Conclusion
 I hope you will have fun with DevSoccer. If this has somewhat popularity, i might add something where to share AIs. in the meantime, if you made an AI for DevSoccer i would be pretty happy if you shared it with me.
