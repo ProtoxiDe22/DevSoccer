@@ -87,6 +87,10 @@ Please always make sure that your Prototype is able to return correct positions 
 right now there's no check on the actual speed the players are at. they can simply move up to `MAXSPEED` on the x axis and up to `MAXSPEED`on the Y axis in the same frame. that means that moving at full speed in oblique direction is actually faster than going full speed while only moving on an axis. this will be probably fixed sooner or later.  
 The same as above applies to the ball, with `MAXBALLSPEED`
 
+### Balancing
+DevSoccer was just finished, and all the constants, that do balance the game, weren't yet tested with a proper team file, hence the game could be unbalanced.  
+Once i get some feedback and some submissions i might balance them to make the game better.
+
 # Conclusion
 I hope you will have fun with DevSoccer. If this has somewhat popularity, i might add something where to share AIs. in the meantime, if you made an AI for DevSoccer i would be pretty happy if you shared it with me.
 in that case you can find me at Telegram (@Protoh) or via email (dsfabio[at]live.it)
