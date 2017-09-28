@@ -47,10 +47,10 @@ If a player tries to move outside the field... he moves out of the field. please
 as already stated, in both teams, player number 0 is the goalkeeper of the team. the goalkeeper works the same as any other player, but if close enough to his team's goal (on the x axis) he will be able to hit the ball from further than the others and it will have more probability than the normal to be the one who kicks the ball.  
 This means that if the goalkeeper X distance is less than a given value (you can find that in the `GOALKEPERLIMIT` variable), his  `INFLUENCEZONE` will be overridden by an higher number (stored in `GOALKEEPERINFZONE`), and his attempt to kick will be (at same distance from the others) more relevant than the others when choosing at random between all the kick attempts.
 
-#`matchinfo` and `status`
+# `matchinfo` and `status`
 this paragraph describes in detail what's in the two objects passed to your functions, take this as a reference to what each of the field means.
 
-###`matchinfo`
+### `matchinfo`
 * `matchinfo.MAXX` the highest X coordinate of the playing field
 * `matchinfo.MAXY` the highest Y coordinate of the playing field
 * `matchinfo.MAXSPEED` the maximum speed that a player can achieve by speeding up
@@ -62,7 +62,7 @@ this paragraph describes in detail what's in the two objects passed to your func
 * `matchinfo.GOALSIZE` the width of the goal
 * `matchinfo.GOALCOORDS` an array of two elements, containing the Y coordinates at which the goals are.
 
-###`status`
+### `status`
 * `status.ballStatus` object. contains the status of the ball
 * `status.ballStatus.x` X coordinate of the ball
 * `status.ballStatus.y` Y coordinate of the ball
@@ -87,6 +87,6 @@ Please always make sure that your Prototype is able to return correct positions 
 right now there's no check on the actual speed the players are at. they can simply move up to `MAXSPEED` on the x axis and up to `MAXSPEED`on the Y axis in the same frame. that means that moving at full speed in oblique direction is actually faster than going full speed while only moving on an axis. this will be probably fixed sooner or later.
 the same as above applies to the ball, with `MAXBALLSPEED`
 
-#Conclusion
+# Conclusion
 I hope you will have fun with DevSoccer. If this has somewhat popularity, i might add something where to share AIs. in the meantime, if you made an AI for DevSoccer i would be pretty happy if you shared it with me.
 in that case you can find me at Telegram (@Protoh) or via email (dsfabio[at]live.it)
