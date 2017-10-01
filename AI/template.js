@@ -49,10 +49,10 @@ function CustomPlayer(){
 			status:		an object defined as follows:
 						{
 							.ballStatus				(object)	contains the status of the ball
-							  .this.x				 (number)	X coordinate of the ball
-							  .this.y				 (number)	Y coordinate of the ball
-							  .this.speedX			 (number)	speed of the ball on the X axis
-							  .this.speedY			 (number)	speed of the ball on the Y axis
+								.this.x				 (number)	X coordinate of the ball
+								.this.y				 (number)	Y coordinate of the ball
+								.this.speedX		 (number)	speed of the ball on the X axis
+								.this.speedY		 (number)	speed of the ball on the Y axis
 							.teamsStatus			(object)	array contains 2 arrays, stores the position and speed of all players
 								.this[team]			 (object)	array contains team's players position and speed
 									.this[player]	  (object)	object contains player position and speed
@@ -67,7 +67,7 @@ function CustomPlayer(){
 				{
 					.player					(object)
 						.this.deltaSpeedX	 (number)	containing the speed variation required on y axis for this player
-						.this.deltaSpeed	 (number)	containing the speed variation required on y axis for this player
+						.this.deltaSpeedY	 (number)	containing the speed variation required on y axis for this player
 					.ball					(object)
 						.thisspeedX			 (number)	containing the speed this player try to impress to the ball on x axis
 						.thisspeedY			 (number)	containing the speed this player try to impress to the ball on y axis
