@@ -19,6 +19,7 @@
     var path2;
     var startButton;
 
+	$.score = [];
     $.customTeamClasses = [];
     $.teams=[[],[]];
     $.customTeams=[[],[]];
@@ -205,16 +206,15 @@
         document.body.insertBefore($.canvas, document.body.childNodes[0]);
         startButton = document.getElementById("startButton");
         startButton.addEventListener('click',startGameFromClient);
+		endButton = document.getElementById("endButton");
+        endButton.addEventListener('click',endMatch);
     };
     function startGameFromClient(){
         var file1 = document.getElementById("team0").files[0];
         var file2 = document.getElementById("team1").files[0];
         loadFromFile(file1, 0, $).then(function(){
             loadFromFile(file2, 1, $).then(function (){
-                initTeam(0);
-                initTeam(1);
-                draw();
-                gameLoop();
+                initMatch();
             });
         });
     }
@@ -223,13 +223,19 @@
         path2 = document.getElementById("team1").files[0];
         loadJS(path1,customTeamClassBinder,document.body,{team:0,scope:$}).then(function () {
             loadJS(path2,customTeamClassBinder,document.body,{team:1,scope:$}).then(function () {
-                initTeam(0);
-                initTeam(1);
-                draw();
-                gameLoop();
+                initMatch();
             });
         });
     }
+	
+	function initMatch(){
+		$.score[0] = 0;
+		$.score[1] = 0;
+		initTeam(0);
+		initTeam(1);
+		draw();
+		gameLoop();
+	}
 
     function getMatchInfo() {
         return{
@@ -309,12 +315,24 @@
         $.ball.move();
     }
     function goalScored(team) {
-        $.context.font="60px Arial";
-        $.context.textAlign= "center";
-        $.context.fillText("Team "+team+" WINS", $.canvas.width/2, $.canvas.height/2);
-        $.end = true;
+		print("team " + team + " scored.", (team==0) ? '#00f' : '#f00');
+		$.score[team]++;
+		$.ball = new Ball();
+        initTeam(0);
+		initTeam(1);
+		draw();
     }
-
+	
+	function endMatch() {
+		if		($.score[0] == $.score[1])
+			print("TIE!", '#000');
+		else if	($.score[0] > $.score[1])
+			print("TEAM 0 WIN!", '#00f');
+		else if	($.score[0] < $.score[1])
+			print("TEAM 1 WIN!", '#f00');
+		$.end = true;
+    }
+	
     function gameLoop(){
         step();
         if(!$.end)

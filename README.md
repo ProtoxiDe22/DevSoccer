@@ -80,13 +80,13 @@ this sections contains a set of rules and clarification which are not included i
 ### Initial positions
 At the beginning of the game, the function init() is called one time for each instance of your player. it should return an array with an X and an Y coordinates which should be a valid starting position for that team.  
 All the positions should be inside the playing field, so both the coordinates will have to be greater than 0, and smaller than the maximum size for that axis.  
-Team0 should begin in the left side of the field, so the the X coordinate should comply with `x<MAXX/2`, on the other hand, the team1 starting X coordinate should be `x>MAXX` because they start on the right side of the field.  
-Please always make sure that your Prototype is able to return correct positions for both sides, otherwise, when someone tries to challenge your AI and uses your file on the other team, the match could not start.
+Team0 should begin in the left side of the field, so the the X coordinate should comply with `x<MAXX/2`, on the other hand, the team1 starting X coordinate should be `x>MAXX/2` because they start on the right side of the field.
+If you set your start position where you aren't allowed, your player will be moved to the closest valid starting point.
 
 ### Oblique speed
-right now there's no check on the actual speed the players are at. they can simply move up to `MAXSPEED` on the x axis and up to `MAXSPEED`on the Y axis in the same frame. that means that moving at full speed in oblique direction is actually faster than going full speed while only moving on an axis. this will be probably fixed sooner or later.  
-The same as above applies to the ball, with `MAXBALLSPEED`
-
+`MAXSPEED` and `MAXBALLSPEED` indicate respectively the maximum player speed and the maximum ball speed. This means when you set speedX and speedY value if 
+<img src="https://latex.codecogs.com/gif.latex?\dpi{100}&space;\sqrt{speedX^2&space;&plus;&space;speedY^2}&space;>&space;maxSpeed" title="sqrt(speedX^2 + speedY^2) > maxSpeed" />
+your speed data will be scaled to keep the direction you want to set, but respecting the maxSpeed limit.
 ### Balancing
 DevSoccer was just finished, and all the constants, that do balance the game, weren't yet tested with a proper team file, hence the game could be unbalanced.  
 Once i get some feedback and some submissions i might balance them to make the game better.

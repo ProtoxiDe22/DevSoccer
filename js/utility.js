@@ -68,12 +68,12 @@ var loadJS = function(url, implementationCode, location, param){
 // loadJS('yourcode.js', yourCodeToBeCalled, document.body);
 
 
-function printError(text){
-    var error = document.createElement('p');
-    error.setAttribute('style','color:red');
+function print(text, color){
+    var message = document.createElement('p');
+    message.setAttribute('style','color:'+color);
     var t = document.createTextNode(text);
-    error.appendChild(t);
-    document.body.appendChild(error);
+    message.appendChild(t);
+    document.body.appendChild(message);
 }
 
  function getClone(oldObject) {
