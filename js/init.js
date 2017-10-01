@@ -280,14 +280,14 @@
         $.context.fillRect(0,pos[0],4,pos[1]);
         $.context.fillRect($.canvas.width, pos[0], -4, pos[1]);
         $.context.fillRect(($.canvas.width/2)-1,0,2,$.canvas.height);
+        $.context.font = "20px Georgia";
         for (var i = 0; i<2; i++){
-            if (i == 0)
-                $.context.fillStyle='#00f';
-            else
-                $.context.fillStyle='#f00';
             for(var player in $.teams[i]){
                 pos = convertPos($.teams[i][player].x, $.teams[i][player].y, $);
+                $.context.fillStyle = (i==0) ? '#00f' : '#f00';
                 $.context.fillRect(pos[0]-10, pos[1]-10, 20, 20);
+                $.context.fillStyle = (i==0) ? '#f00' : '#00f';
+                $.context.fillText(Number(player)+1,(player>8) ? pos[0]-10 : pos[0]-5, pos[1]+5);
             }
             $.context.beginPath();
             var pos = convertPos($.ball.x, $.ball.y, $);
