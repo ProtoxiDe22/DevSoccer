@@ -5,8 +5,8 @@ In this section you can find more instructions on how to develop your AI and som
 
 ### Required Functions
 Code must include `CustomPlayer()` definintion and 2 functions:
-* `init()`
-* `turn()`
+* [`init()`](#function-initteam-player-match)
+* [`turn()`](#function-turnstatus)
 ```JS
 function CustomPlayer(){
 	this.init = function(team, player, match){
@@ -28,18 +28,18 @@ Called before the start of the match 1 time for each player.
   - match	(object)
     containing following values:
 	```JS
-		match.MAXX			// (number) the highest X coordinate of the playing field
-		match.MAXY			// (number) the highest Y coordinate of the playing field
-		match.MAXSPEED			// (number) the maximum speed that a player can achieve by speeding up
-		match.MAXVARIATION		// (number) the maximum change in speed in a frame
-		match.INFLUENCEZONE		// (number) the maximum distance at which a normal player (or goalkeeper outside his bonus limit) can attempt a kick
-		match.GOALKEEPERINFZONE		// (number) the maximum distance at which a goalkeeper inside his bonus zone can attempt a kick
-		match.GOALKEEPERLIMIT		// (number) the maximum X axis distance from his team's goal in which a goalkeeper is granted his bonuses
-		match.MAXBALLSPEED		// (number) the maximum speed that a player can set on the ball with a kick
-		match.GOALSIZE			// (number) the width of the goal
-		match.GOALCOORDS		// (object) array of two elements, containing the Y coordinates at which the goalposts are
-			match.GOALCOORDS[0]	  // (number) Y coordinate of first goalpost
-			match.GOALCOORDS[1]	  // (number) Y coordinate of second goalpost
+		match.MAXX		// (number) the highest X coordinate of the playing field
+		match.MAXY		// (number) the highest Y coordinate of the playing field
+		match.MAXSPEED		// (number) the maximum speed that a player can achieve by speeding up
+		match.MAXVARIATION	// (number) the maximum change in speed in a frame
+		match.INFLUENCEZONE	// (number) the maximum distance at which a normal player (or goalkeeper outside his bonus limit) can attempt a kick
+		match.GOALKEEPERINFZONE	// (number) the maximum distance at which a goalkeeper inside his bonus zone can attempt a kick
+		match.GOALKEEPERLIMIT	// (number) the maximum X axis distance from his team's goal in which a goalkeeper is granted his bonuses
+		match.MAXBALLSPEED	// (number) the maximum speed that a player can set on the ball with a kick
+		match.GOALSIZE		// (number) the width of the goal
+		match.GOALCOORDS	// (object) array of two elements, containing the Y coordinates at which the goalposts are
+		  match.GOALCOORDS[0]	  // (number) Y coordinate of first goalpost
+		  match.GOALCOORDS[1]	  // (number) Y coordinate of second goalpost
 	```
   
 - return
@@ -57,18 +57,18 @@ Called during the match 1 time for each player in every timeframe.
 - parameters
   - status	(object)
     ```JS
-	status.ballStatus					// (object) contains the status of the ball
-		status.ballStatus.x				  // (number) X coordinate of the ball
-		status.ballStatus.y				  // (number) Y coordinate of the ball
-		status.ballStatus.speedX			  // (number) speed of the ball on the X axis
-		vtatus.ballStatus.speedY			  // (number) speed of the ball on the Y axis
-	status.teamsStatus					// (object) array contains 2 arrays, stores the position and speed of all players (team=[0,1]) 
-		status.teamsStatus[team]			  // (object) array contains team's players position and speed (player=[0,1,2,3,4,5,6,7,8,9,10])
-			status.teamsStatus[][player]		    // (object) object contains player position and speed
-				status.teamsStatus[][].x	      // (number) X coordinate of the player on team team with number player
-				status.teamsStatus[][].y	      // (number) Y coordinate of the player on team team with number player
-				status.teamsStatus[][].speedX	      // (number) speed of the player on team team with number player on the X axis
-				status.teamsStatus[][].speedY	      // (number) speed of the player on team team with number player on the Y axis
+	status.ballStatus		// (object) contains the status of the ball
+	  status.ballStatus.x		  // (number) X coordinate of the ball
+	  status.ballStatus.y		  // (number) Y coordinate of the ball
+	  status.ballStatus.speedX	  // (number) speed of the ball on the X axis
+	  status.ballStatus.speedY	  // (number) speed of the ball on the Y axis
+	status.teamsStatus		// (object) array contains 2 arrays, stores the position and speed of all players (team=[0,1]) 
+	  status.teamsStatus[team]	  // (object) array contains team's players position and speed (player=[0,1,2,3,4,5,6,7,8,9,10])
+	    status.teamsStatus[][player]    // (object) object contains player position and speed
+	      status.teamsStatus[][].x        // (number) X coordinate of the player on team team with number player
+	      status.teamsStatus[][].y        // (number) Y coordinate of the player on team team with number player
+	      status.teamsStatus[][].speedX   // (number) speed of the player on team team with number player on the X axis
+	      status.teamsStatus[][].speedY   // (number) speed of the player on team team with number player on the Y axis
 	}
 	```
   
@@ -91,7 +91,7 @@ Called during the match 1 time for each player in every timeframe.
 	```
 
 ### Other info
-This manual is still in development, please refer to the main [README](../README.md) file to get al necessary informations.
+This manual is still in development, please refer to the main [README](../README.md#instructions) file to get all necessary informations.
 
 [Here](./template.js) you can find a template file.
 
