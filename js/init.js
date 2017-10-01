@@ -32,7 +32,6 @@
         this.speedY=0;
 
         this.move = function(){
-            //todo max total movement should be $.MAXBALLSPEED
             var hitWall = false;
             //region check goal, ball out of bounds and move it
             if(this.y + this.speedY > $.MAXY)
@@ -129,13 +128,12 @@
         }
         else
             return;
-
-        if (Math.abs(this.speedX)>$.MAXBALLSPEED)
-            this.speedX = Math.sign(this.speedX)*$.MAXBALLSPEED;
-
-        if(Math.abs(this.speedY)>$.MAXBALLSPEED){
-            this.speedY = Math.sign(this.speedY)*$.MAXBALLSPEED
-        }
+		
+		//checks and adjust speed validity
+		var speed = {x: this.speedX, y: this.speedY};
+		speed = getAllowedSpeed(speed, $.MAXBALLSPEED);
+		this.speedX = speed.x;
+		this.speedY = speed.y;
         //endregion
     }
 
@@ -146,17 +144,12 @@
         this.speedY=0;
         this.team = team;
         this.number = number;
-        //checks and adjust speed validity before changing it
+        //checks and adjust speed validity
         this.modifySpeed = function(deltaX, deltaY){
-            if(Math.abs(this.speedX + deltaX)<=$.MAXSPEED)
-                this.speedX += deltaX;
-            else
-                this.speedX = Math.sign(this.speedX)*$.MAXSPEED;
-
-            if(Math.abs(this.speedY + deltaY)<=$.MAXSPEED)
-                this.speedY += deltaY;
-            else
-                this.speedY = Math.sign(this.speedY)*$.MAXSPEED
+			var speed = {x: this.speedX + deltaX, y: this.speedY + deltaY};
+			speed = getAllowedSpeed(speed, $.MAXSPEED);
+			this.speedX = speed.x;
+			this.speedY = speed.y;
         };
 
         //returns fields
@@ -168,11 +161,23 @@
                 speedY : this.speedY
             };
         };
-        this.move = function () {//todo max total movement should be $.MAXSPEED
+        this.move = function () {
             this.x += this.speedX;
             this.y += this.speedY;
         }
     }
+	
+	//if total speed > max speed will scale speed to stay into limits and keep direction
+	function getAllowedSpeed(speed, max){
+		if(Math.sqrt(Math.pow(speed.x,2) + Math.pow(speed.y,2)) > max){
+			//sqrt(x^2 + y^2) = m & x/y = k ->
+			//y = sqrt(m^2 / (k^2+1)) & x = ky
+			var k = speed.x / speed.y;
+			speed.y = Math.sign(speed.y) * Math.sqrt(Math.pow(max,2) / (1+Math.pow(k,2)));
+			speed.x = Math.sign(speed.x) * (speed.y == 0) ? max : k * speed.y;
+		}
+		return speed;
+	}
 
     function getStatus() {
         var status = {
@@ -245,26 +250,12 @@
             $.customTeams[team][i] = new $.customTeamClasses[team]();
             var pos = $.customTeams[team][i].init(team, i, getMatchInfo());
 
-            //region check if position is valid
-            if (pos[1]>$.MAXY || pos[1]<0) {
-                printError("position of player " + i + " team " + team + " is invalid");
-                $.end = true;
-                break;
-            }
-            if (team == 0){
-                if(pos[0] < 0 || pos[0]>($.MAXX/2)){
-                    printError("position of player " + i + " team " + team + " is invalid");
-                    $.end = true;
-                    break;
-                }
-            }
-            if (team == 1){
-                if (pos[0]<($.MAXX/2) || pos[0]>$.MAXX){
-                    printError("position of player " + i + " team " + team + " is invalid");
-                    $.end = true;
-                    break;
-                }
-            }
+            //region move to a valid position
+            pos[1] = Math.max(Math.min($.MAXY, pos[1]), 0);
+            if (team == 0)
+                pos[0] = Math.max(Math.min($.MAXX/2 - 1, pos[0]), 0);
+            if (team == 1)
+                pos[0] = Math.min(Math.max($.MAXX/2 + 1, pos[0]), $.MAXX);
             //endregion
 
             $.teams[team][i] = new Player(pos[0],pos[1], team, i);
