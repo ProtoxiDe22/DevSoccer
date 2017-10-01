@@ -17,7 +17,7 @@ matchinfo is an object which will contain useful information about the setup of 
 The `turn` function is called once per frame and should return an object with info about what the player will do for that frame, what a player can do will be explained in the next section.  
 The argument is an object which contains all information about the current state of the game, that is position and movement of each player and the ball.
 
-A template for the file you should submit is included in the code (js/testTeam.js).  
+A [template](./AI/template.js) for the file you should submit is included in the [AIs Section](./AI).  
 once you are done writing you AI (or you want to test it), open index.html, select the two AI files and click "Start Game".
 
 the players and the ball always move on the field with a given speed (the number of units that entity moves per frame) and the coordinates start at (0,0) in the top left corner, this means that moving with positive x speed means moving to the right, negative x speed means left, positive y means down and negative y means up.
@@ -69,10 +69,10 @@ this paragraph describes in detail what's in the two objects passed to your func
 * `status.ballStatus.speedX` speed of the ball on the X axis
 * `status.ballStatus.speedY` speed of the ball on the Y axis
 * `status.teamsStatus` array containing 2 arrays, stores the position and speed of all players
-* `status.teamStatus[team][player].x` X coordinate of the player on team `team` with number `player`
-* `status.teamStatus[team][player].y` Y coordinate of the player on team `team` with number `player`
-* `status.teamStatus[team][player].speedX` speed of the player on team `team` with number `player` on the X axis
-* `status.teamStatus[team][player].speedY` speed of the player on team `team` with number `player` on the Y axis
+* `status.teamsStatus[team][player].x` X coordinate of the player on team `team` with number `player`
+* `status.teamsStatus[team][player].y` Y coordinate of the player on team `team` with number `player`
+* `status.teamsStatus[team][player].speedX` speed of the player on team `team` with number `player` on the X axis
+* `status.teamsStatus[team][player].speedY` speed of the player on team `team` with number `player` on the Y axis
 
 # Notes
 this sections contains a set of rules and clarification which are not included in the Instructions section
