@@ -23,7 +23,7 @@
     $.customTeamClasses = [];
     $.teams=[[],[]];
     $.customTeams=[[],[]];
-    $.ball = new Ball();
+    $.ball = {};
     $.attemptList = [];
     $.end = false;
     function Ball() {
@@ -231,6 +231,7 @@
 	function initMatch(){
 		$.score[0] = 0;
 		$.score[1] = 0;
+		$.ball = new Ball();
 		initTeam(0);
 		initTeam(1);
 		draw();
