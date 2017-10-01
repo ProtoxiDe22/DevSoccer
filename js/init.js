@@ -9,7 +9,7 @@
     $.MAXBALLSPEED = 125;
     $.MISSINGPROB = 0.004; //0.001
     $.BALLDECAY = 0.3;
-    $.FRAMEDURATION = 50;//ms per frame
+    $.FRAMEDURATION = 20;//ms per frame
     $.GOALSIZE = 900;//size of the goal
     $.GOALCOORDS = [($.MAXY/2)-($.GOALSIZE/2),($.MAXY/2)+($.GOALSIZE/2)];
     $.GOALKEEPERINFZONE = $.INFLUENCEZONE * 1.5;// zone of influence for goalkeeper
@@ -25,7 +25,7 @@
     $.customTeams=[[],[]];
     $.ball = {};
     $.attemptList = [];
-    $.end = false;
+    $.end = true;
     function Ball() {
         this.x=$.MAXX/2;
         this.y=$.MAXY/2;
@@ -204,11 +204,18 @@
         $.canvas.height = 450;
         $.context = $.canvas.getContext("2d");
         document.body.insertBefore($.canvas, document.body.childNodes[0]);
-        startButton = document.getElementById("startButton");
+        
+		startButton = document.getElementById("startButton");
         startButton.addEventListener('click',startGameFromClient);
 		endButton = document.getElementById("endButton");
         endButton.addEventListener('click',endMatch);
+		
+		pauseButton = document.getElementById("pauseButton");
+        pauseButton.addEventListener('click',pauseMatch);
+		restartButton = document.getElementById("restartButton");
+        restartButton.addEventListener('click',restartMatch);
     };
+	
     function startGameFromClient(){
         var file1 = document.getElementById("team0").files[0];
         var file2 = document.getElementById("team1").files[0];
@@ -227,16 +234,6 @@
             });
         });
     }
-	
-	function initMatch(){
-		$.score[0] = 0;
-		$.score[1] = 0;
-		$.ball = new Ball();
-		initTeam(0);
-		initTeam(1);
-		draw();
-		gameLoop();
-	}
 
     function getMatchInfo() {
         return{
@@ -279,13 +276,14 @@
         $.context.fillRect($.canvas.width, pos[0], -4, pos[1]);
         $.context.fillRect(($.canvas.width/2)-1,0,2,$.canvas.height);
         $.context.font = "20px Georgia";
+		$.context.textAlign= "center";
         for (var i = 0; i<2; i++){
             for(var player in $.teams[i]){
                 pos = convertPos($.teams[i][player].x, $.teams[i][player].y, $);
                 $.context.fillStyle = (i==0) ? '#00f' : '#f00';
                 $.context.fillRect(pos[0]-10, pos[1]-10, 20, 20);
                 $.context.fillStyle = (i==0) ? '#f00' : '#00f';
-                $.context.fillText(Number(player)+1,(player>8) ? pos[0]-10 : pos[0]-5, pos[1]+5);
+                $.context.fillText(Number(player)+1, pos[0], pos[1]+5);
             }
             $.context.beginPath();
             var pos = convertPos($.ball.x, $.ball.y, $);
@@ -294,6 +292,12 @@
             $.context.closePath();
             $.context.fill();
         }
+		//scoreboard
+		$.context.font="60px Arial";
+		$.context.fillStyle = '#000';
+		$.context.textAlign= "left";
+		textWidth = $.context.measureText($.score[0]+" ").width + $.context.measureText("-").width / 2;
+		$.context.fillText($.score[0]+" - "+$.score[1], $.canvas.width/2 - textWidth, 50);
     }
 
     function executeAttempts() {
@@ -315,8 +319,8 @@
         }
         $.ball.move();
     }
+	
     function goalScored(team) {
-		print("team " + team + " scored.", (team==0) ? '#00f' : '#f00');
 		$.score[team]++;
 		$.ball = new Ball();
         initTeam(0);
@@ -324,15 +328,52 @@
 		draw();
     }
 	
+	function initMatch(){
+		if(!$.end)return;
+		$.score[0] = 0;
+		$.score[1] = 0;
+		$.ball = new Ball();
+		$.end = false;
+		initTeam(0);
+		initTeam(1);
+		draw();
+		gameLoop();
+	}
+	
 	function endMatch() {
-		if		($.score[0] == $.score[1])
-			print("TIE!", '#000');
-		else if	($.score[0] > $.score[1])
-			print("TEAM 0 WIN!", '#00f');
-		else if	($.score[0] < $.score[1])
-			print("TEAM 1 WIN!", '#f00');
+		if($.end)return;
 		$.end = true;
+		var text, color;
+		if		($.score[0] == $.score[1]){
+			color = '#000';
+			text = "TIE!";
+		}
+		else if	($.score[0] > $.score[1]){
+			color = '#00f';
+			text = "TEAM 0 WIN!";
+		}
+		else if	($.score[0] < $.score[1]){
+			color = '#f00';
+			text = "TEAM 1 WIN!";
+		}
+		setTimeout(function(){
+			$.context.font="100px Arial";
+			$.context.textAlign = "center";
+			$.context.fillStyle = color;
+			$.context.fillText(text, $.canvas.width/2, $.canvas.height/2 + 35);
+		}, $.FRAMEDURATION);
     }
+	
+	function restartMatch(){
+		if(!$.end)return;
+		$.end = false;
+		gameLoop();
+	}
+	
+	function pauseMatch(){
+		if($.end)return;
+		$.end = true;
+	}
 	
     function gameLoop(){
         step();
