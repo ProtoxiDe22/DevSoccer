@@ -19,6 +19,7 @@
     var path2;
     var startButton;
 
+
 	$.score = [];
     $.customTeamClasses = [];
     $.teams=[[],[]];
@@ -103,7 +104,7 @@
         this.y = player.y;
         this.valid = false;
         this.validGoalKeeper = false;
-        this.distance = Math.sqrt(Math.pow(($.ball.x-this.x), 2) + Math.pow(($.ball.y-this.y), 2));//calculates distance from player to ball
+        this.distance = player.distance;
         //region checks and adjustments on the speed and distance
         if (player.number == 0) {
             if(player.team == 0) {
@@ -146,6 +147,8 @@
         this.team = team;
         this.number = number;
         //checks and adjust speed validity
+        this.distance = Math.sqrt(Math.pow(($.ball.x-this.x), 2) + Math.pow(($.ball.y-this.y), 2));//calculates distance from player to ball
+        //checks and adjust speed validity before changing it
         this.modifySpeed = function(deltaX, deltaY){
 			var speed = {x: this.speedX + deltaX, y: this.speedY + deltaY};
 			speed = getAllowedSpeed(speed, $.MAXSPEED);
@@ -159,12 +162,14 @@
                 x : this.x,
                 y : this.y,
                 speedX : this.speedX,
-                speedY : this.speedY
+                speedY : this.speedY,
+                distance : this.distance
             };
         };
         this.move = function () {
             this.x += this.speedX;
             this.y += this.speedY;
+            this.distance = Math.sqrt(Math.pow(($.ball.x-this.x), 2) + Math.pow(($.ball.y-this.y), 2));//calculates distance from player to ball
         }
     }
 	
@@ -203,8 +208,7 @@
         $.canvas.width = 900;
         $.canvas.height = 450;
         $.context = $.canvas.getContext("2d");
-        document.body.insertBefore($.canvas, document.body.childNodes[0]);
-        
+        document.body.insertBefore($.canvas, document.body.childNodes[0]);        
 		startButton = document.getElementById("startButton");
         startButton.addEventListener('click',startGameFromClient);
 		endButton = document.getElementById("endButton");
@@ -215,7 +219,6 @@
 		restartButton = document.getElementById("restartButton");
         restartButton.addEventListener('click',restartMatch);
     };
-	
     function startGameFromClient(){
         var file1 = document.getElementById("team0").files[0];
         var file2 = document.getElementById("team1").files[0];
@@ -378,7 +381,7 @@
     function gameLoop(){
         step();
         if(!$.end)
-            setTimeout(gameLoop, $.FRAMEDURATION);
+            $.timeout = setTimeout(gameLoop, $.FRAMEDURATION);
     }
     function step(){
         var attempt;
