@@ -17,7 +17,8 @@ matchinfo is an object which will contain useful information about the setup of 
 The `turn` function is called once per frame and should return an object with info about what the player will do for that frame, what a player can do will be explained in the next section.  
 The argument is an object which contains all information about the current state of the game, that is position and movement of each player and the ball.
 
-A [template](./AI/template.js) for the file you should submit is included in the [AIs Section](./AI).  
+For reference about the arguments passed to these two function refer to [./AI/README.md](./AI/README.md)  
+A [template](./AI/template.js) for the file you should submit is included in the [AIs Section](./AI).    
 once you are done writing you AI (or you want to test it), open index.html, select the two AI files and click "Start Game".
 
 the players and the ball always move on the field with a given speed (the number of units that entity moves per frame) and the coordinates start at (0,0) in the top left corner, this means that moving with positive x speed means moving to the right, negative x speed means left, positive y means down and negative y means up.
@@ -47,33 +48,6 @@ If a player tries to move outside the field... he moves out of the field. please
 as already stated, in both teams, player number 0 is the goalkeeper of the team. the goalkeeper works the same as any other player, but if close enough to his team's goal (on the x axis) he will be able to hit the ball from farther than the others and it will have more probability than the normal to be the one who kicks the ball.  
 This means that if the goalkeeper X distance is less than a given value (you can find that in the `GOALKEPERLIMIT` variable), his  `INFLUENCEZONE` will be overridden by an higher number (stored in `GOALKEEPERINFZONE`), and his attempt to kick will be (at same distance from the others) more relevant than the others when choosing at random between all the kick attempts.
 
-# `matchinfo` and `status`
-this paragraph describes in detail what's in the two objects passed to your functions, take this as a reference to what each of the field means.
-
-### `matchinfo`
-* `matchinfo.MAXX` the highest X coordinate of the playing field
-* `matchinfo.MAXY` the highest Y coordinate of the playing field
-* `matchinfo.MAXSPEED` the maximum speed that a player can achieve by speeding up
-* `matchinfo.MAXVARIATION` the maximum change in speed in a frame
-* `matchinfo.INFLUENCEZONE` the maximum distance at which a normal player (or goalkeeper outside his bonus limit) can attempt a kick
-* `matchinfo.GOALKEEPERINFZONE` the maximum distance at which a goalkeeper inside his bonus zone can attempt a kick
-* `matchinfo.GOALKEEPERLIMIT` the maximum X axis distance from his team's goal in which a goalkeeper is granted his bonuses
-* `matchinfo.MAXBALLSPEED` the maximum speed that a player can set on the ball with a kick
-* `matchinfo.GOALSIZE` the width of the goal
-* `matchinfo.GOALCOORDS` an array of two elements, containing the Y coordinates at which the goals are.
-
-### `status`
-* `status.ballStatus` object. contains the status of the ball
-* `status.ballStatus.x` X coordinate of the ball
-* `status.ballStatus.y` Y coordinate of the ball
-* `status.ballStatus.speedX` speed of the ball on the X axis
-* `status.ballStatus.speedY` speed of the ball on the Y axis
-* `status.teamsStatus` array containing 2 arrays, stores the position and speed of all players
-* `status.teamStatus[team][player].x` X coordinate of the player on team `team` with number `player`
-* `status.teamStatus[team][player].y` Y coordinate of the player on team `team` with number `player`
-* `status.teamStatus[team][player].speedX` speed of the player on team `team` with number `player` on the X axis
-* `status.teamStatus[team][player].speedY` speed of the player on team `team` with number `player` on the Y axis
-* `status.teamsStatus[team][player].distance` distance between the player and the ball
 
 
 # Notes

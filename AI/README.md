@@ -69,6 +69,7 @@ Called during the match 1 time for each player in every timeframe.
 	      status.teamsStatus[][].y        // (number) Y coordinate of the player on team team with number player
 	      status.teamsStatus[][].speedX   // (number) speed of the player on team team with number player on the X axis
 	      status.teamsStatus[][].speedY   // (number) speed of the player on team team with number player on the Y axis
+          status.teamsStatus[][].distance // (number) distance between the player and the ball
 	}
 	```
   
