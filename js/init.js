@@ -98,7 +98,7 @@
         this.y = player.y;
         this.valid = false;
         this.validGoalKeeper = false;
-        this.distance = Math.sqrt(Math.pow(($.ball.x-this.x), 2) + Math.pow(($.ball.y-this.y), 2));//calculates distance from player to ball
+        this.distance = player.distance;
         //region checks and adjustments on the speed and distance
         if (player.number == 0) {
             if(player.team == 0) {
@@ -141,6 +141,8 @@
         this.speedY=0;
         this.team = team;
         this.number = number;
+        this.distance = Math.sqrt(Math.pow(($.ball.x-this.x), 2) + Math.pow(($.ball.y-this.y), 2));//calculates distance from player to ball
+
         //checks and adjust speed validity before changing it
         this.modifySpeed = function(deltaX, deltaY){
             if(Math.abs(this.speedX + deltaX)<=$.MAXSPEED)
@@ -160,12 +162,14 @@
                 x : this.x,
                 y : this.y,
                 speedX : this.speedX,
-                speedY : this.speedY
+                speedY : this.speedY,
+                distance : this.distance
             };
         };
         this.move = function () {//todo max total movement should be $.MAXSPEED
             this.x += this.speedX;
             this.y += this.speedY;
+            this.distance = Math.sqrt(Math.pow(($.ball.x-this.x), 2) + Math.pow(($.ball.y-this.y), 2));//calculates distance from player to ball
         }
     }
 

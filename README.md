@@ -29,7 +29,7 @@ Team0 starts in the left side of the field must defend the goal at `x = 0` and s
 ### turns and what you can do
 in DevSoccer each frame every player decides what he should do next. A player can increase/decrease his speed  in a given direction and try to kick the ball simultaneously.
 
-Kicking the ball means to set its exact speed and a player can do that only if is close enough to the ball (the distance from the player to the ball should be less than the value set in the match variable `INFLUENCEZONE`, except for the goalkeeper which i'll talk about later).  
+Kicking the ball means to set its exact speed and a player can do that only if is close enough to the ball (`status.teamsStatus[team][player].distance` should be less than the value set in the match variable `INFLUENCEZONE`, except for the goalkeeper which i'll talk about later).  
 To try kick the ball a player should set at least one between `ball.speedX` and `ball.speedY` in the `turn()` return object.  
 If more than a player tries to kick the ball in the same frame, the successful kick will be selected at random between all of kick attempts, the closer a player is to the ball, the highest is the probability of his kick to succeed over the others.  
 Regardless of how many try to kick the ball there will always be a probability of missing the ball.  
@@ -44,7 +44,7 @@ If a player tries to move outside the field... he moves out of the field. please
 
 ### the Goalkeeper
 
-as already stated, in both teams, player number 0 is the goalkeeper of the team. the goalkeeper works the same as any other player, but if close enough to his team's goal (on the x axis) he will be able to hit the ball from further than the others and it will have more probability than the normal to be the one who kicks the ball.  
+as already stated, in both teams, player number 0 is the goalkeeper of the team. the goalkeeper works the same as any other player, but if close enough to his team's goal (on the x axis) he will be able to hit the ball from farther than the others and it will have more probability than the normal to be the one who kicks the ball.  
 This means that if the goalkeeper X distance is less than a given value (you can find that in the `GOALKEPERLIMIT` variable), his  `INFLUENCEZONE` will be overridden by an higher number (stored in `GOALKEEPERINFZONE`), and his attempt to kick will be (at same distance from the others) more relevant than the others when choosing at random between all the kick attempts.
 
 # `matchinfo` and `status`
@@ -73,6 +73,7 @@ this paragraph describes in detail what's in the two objects passed to your func
 * `status.teamStatus[team][player].y` Y coordinate of the player on team `team` with number `player`
 * `status.teamStatus[team][player].speedX` speed of the player on team `team` with number `player` on the X axis
 * `status.teamStatus[team][player].speedY` speed of the player on team `team` with number `player` on the Y axis
+* `status.teamsStatus[team][player].distance` distance between the player and the ball
 
 # Notes
 this sections contains a set of rules and clarification which are not included in the Instructions section
