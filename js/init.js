@@ -19,12 +19,7 @@
     var path2;
     var startButton;
 
-    $.customTeamClasses = [];
-    $.teams=[[],[]];
-    $.customTeams=[[],[]];
-    $.ball = new Ball();
-    $.attemptList = [];
-    $.end = false;
+
     function Ball() {
         this.x=$.MAXX/2;
         this.y=$.MAXY/2;
@@ -199,8 +194,20 @@
         $.context = $.canvas.getContext("2d");
         document.body.insertBefore($.canvas, document.body.childNodes[0]);
         startButton = document.getElementById("startButton");
-        startButton.addEventListener('click',startGameFromClient);
+        startButton.addEventListener('click',initGame);
     };
+
+    function initGame(){
+        if ($.timeout)
+            clearTimeout($.timeout);
+        $.customTeamClasses = [];
+        $.teams=[[],[]];
+        $.customTeams=[[],[]];
+        $.ball = new Ball();
+        $.attemptList = [];
+        $.end = false;
+        startGameFromClient();
+    }
     function startGameFromClient(){
         var file1 = document.getElementById("team0").files[0];
         var file2 = document.getElementById("team1").files[0];
@@ -327,7 +334,7 @@
     function gameLoop(){
         step();
         if(!$.end)
-            setTimeout(gameLoop, $.FRAMEDURATION);
+            $.timeout = setTimeout(gameLoop, $.FRAMEDURATION);
     }
     function step(){
         var attempt;
