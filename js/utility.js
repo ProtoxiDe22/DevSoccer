@@ -67,15 +67,6 @@ var loadJS = function(url, implementationCode, location, param){
 // }
 // loadJS('yourcode.js', yourCodeToBeCalled, document.body);
 
-
-function printError(text){
-    var error = document.createElement('p');
-    error.setAttribute('style','color:red');
-    var t = document.createTextNode(text);
-    error.appendChild(t);
-    document.body.appendChild(error);
-}
-
  function getClone(oldObject) {
     var tempClone = {};
 

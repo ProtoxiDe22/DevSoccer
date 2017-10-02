@@ -9,7 +9,7 @@
     $.MAXBALLSPEED = 125;
     $.MISSINGPROB = 0.004; //0.001
     $.BALLDECAY = 0.3;
-    $.FRAMEDURATION = 50;//ms per frame
+    $.FRAMEDURATION = 20;//ms per frame
     $.GOALSIZE = 900;//size of the goal
     $.GOALCOORDS = [($.MAXY/2)-($.GOALSIZE/2),($.MAXY/2)+($.GOALSIZE/2)];
     $.GOALKEEPERINFZONE = $.INFLUENCEZONE * 1.5;// zone of influence for goalkeeper
@@ -20,6 +20,13 @@
     var startButton;
 
 
+	$.score = [];
+    $.customTeamClasses = [];
+    $.teams=[[],[]];
+    $.customTeams=[[],[]];
+    $.ball = {};
+    $.attemptList = [];
+    $.end = true;
     function Ball() {
         this.x=$.MAXX/2;
         this.y=$.MAXY/2;
@@ -27,7 +34,6 @@
         this.speedY=0;
 
         this.move = function(){
-            //todo max total movement should be $.MAXBALLSPEED
             var hitWall = false;
             //region check goal, ball out of bounds and move it
             if(this.y + this.speedY > $.MAXY)
@@ -124,13 +130,12 @@
         }
         else
             return;
-
-        if (Math.abs(this.speedX)>$.MAXBALLSPEED)
-            this.speedX = Math.sign(this.speedX)*$.MAXBALLSPEED;
-
-        if(Math.abs(this.speedY)>$.MAXBALLSPEED){
-            this.speedY = Math.sign(this.speedY)*$.MAXBALLSPEED
-        }
+		
+		//checks and adjust speed validity
+		var speed = {x: this.speedX, y: this.speedY};
+		speed = getAllowedSpeed(speed, $.MAXBALLSPEED);
+		this.speedX = speed.x;
+		this.speedY = speed.y;
         //endregion
     }
 
@@ -141,19 +146,14 @@
         this.speedY=0;
         this.team = team;
         this.number = number;
+        //checks and adjust speed validity
         this.distance = Math.sqrt(Math.pow(($.ball.x-this.x), 2) + Math.pow(($.ball.y-this.y), 2));//calculates distance from player to ball
-
         //checks and adjust speed validity before changing it
         this.modifySpeed = function(deltaX, deltaY){
-            if(Math.abs(this.speedX + deltaX)<=$.MAXSPEED)
-                this.speedX += deltaX;
-            else
-                this.speedX = Math.sign(this.speedX)*$.MAXSPEED;
-
-            if(Math.abs(this.speedY + deltaY)<=$.MAXSPEED)
-                this.speedY += deltaY;
-            else
-                this.speedY = Math.sign(this.speedY)*$.MAXSPEED
+			var speed = {x: this.speedX + deltaX, y: this.speedY + deltaY};
+			speed = getAllowedSpeed(speed, $.MAXSPEED);
+			this.speedX = speed.x;
+			this.speedY = speed.y;
         };
 
         //returns fields
@@ -166,12 +166,24 @@
                 distance : this.distance
             };
         };
-        this.move = function () {//todo max total movement should be $.MAXSPEED
+        this.move = function () {
             this.x += this.speedX;
             this.y += this.speedY;
             this.distance = Math.sqrt(Math.pow(($.ball.x-this.x), 2) + Math.pow(($.ball.y-this.y), 2));//calculates distance from player to ball
         }
     }
+	
+	//if total speed > max speed will scale speed to stay into limits and keep direction
+	function getAllowedSpeed(speed, max){
+		if(Math.sqrt(Math.pow(speed.x,2) + Math.pow(speed.y,2)) > max){
+			//sqrt(x^2 + y^2) = m & x/y = k ->
+			//y = sqrt(m^2 / (k^2+1)) & x = ky
+			var k = speed.x / speed.y;
+			speed.y = Math.sign(speed.y) * Math.sqrt(Math.pow(max,2) / (1+Math.pow(k,2)));
+			speed.x = Math.sign(speed.x) * (speed.y == 0) ? max : k * speed.y;
+		}
+		return speed;
+	}
 
     function getStatus() {
         var status = {
@@ -196,31 +208,23 @@
         $.canvas.width = 900;
         $.canvas.height = 450;
         $.context = $.canvas.getContext("2d");
-        document.body.insertBefore($.canvas, document.body.childNodes[0]);
-        startButton = document.getElementById("startButton");
-        startButton.addEventListener('click',initGame);
+        document.body.insertBefore($.canvas, document.body.childNodes[0]);        
+		startButton = document.getElementById("startButton");
+        startButton.addEventListener('click',startGameFromClient);
+		endButton = document.getElementById("endButton");
+        endButton.addEventListener('click',endMatch);
+		
+		pauseButton = document.getElementById("pauseButton");
+        pauseButton.addEventListener('click',pauseMatch);
+		restartButton = document.getElementById("restartButton");
+        restartButton.addEventListener('click',restartMatch);
     };
-
-    function initGame(){
-        if ($.timeout)
-            clearTimeout($.timeout);
-        $.customTeamClasses = [];
-        $.teams=[[],[]];
-        $.customTeams=[[],[]];
-        $.ball = new Ball();
-        $.attemptList = [];
-        $.end = false;
-        startGameFromClient();
-    }
     function startGameFromClient(){
         var file1 = document.getElementById("team0").files[0];
         var file2 = document.getElementById("team1").files[0];
         loadFromFile(file1, 0, $).then(function(){
             loadFromFile(file2, 1, $).then(function (){
-                initTeam(0);
-                initTeam(1);
-                draw();
-                gameLoop();
+                initMatch();
             });
         });
     }
@@ -229,10 +233,7 @@
         path2 = document.getElementById("team1").files[0];
         loadJS(path1,customTeamClassBinder,document.body,{team:0,scope:$}).then(function () {
             loadJS(path2,customTeamClassBinder,document.body,{team:1,scope:$}).then(function () {
-                initTeam(0);
-                initTeam(1);
-                draw();
-                gameLoop();
+                initMatch();
             });
         });
     }
@@ -256,26 +257,12 @@
             $.customTeams[team][i] = new $.customTeamClasses[team]();
             var pos = $.customTeams[team][i].init(team, i, getMatchInfo());
 
-            //region check if position is valid
-            if (pos[1]>$.MAXY || pos[1]<0) {
-                printError("position of player " + i + " team " + team + " is invalid");
-                $.end = true;
-                break;
-            }
-            if (team == 0){
-                if(pos[0] < 0 || pos[0]>($.MAXX/2)){
-                    printError("position of player " + i + " team " + team + " is invalid");
-                    $.end = true;
-                    break;
-                }
-            }
-            if (team == 1){
-                if (pos[0]<($.MAXX/2) || pos[0]>$.MAXX){
-                    printError("position of player " + i + " team " + team + " is invalid");
-                    $.end = true;
-                    break;
-                }
-            }
+            //region move to a valid position
+            pos[1] = Math.max(Math.min($.MAXY, pos[1]), 0);
+            if (team == 0)
+                pos[0] = Math.max(Math.min($.MAXX/2 - 1, pos[0]), 0);
+            if (team == 1)
+                pos[0] = Math.min(Math.max($.MAXX/2 + 1, pos[0]), $.MAXX);
             //endregion
 
             $.teams[team][i] = new Player(pos[0],pos[1], team, i);
@@ -291,14 +278,15 @@
         $.context.fillRect(0,pos[0],4,pos[1]);
         $.context.fillRect($.canvas.width, pos[0], -4, pos[1]);
         $.context.fillRect(($.canvas.width/2)-1,0,2,$.canvas.height);
+        $.context.font = "20px Georgia";
+		$.context.textAlign= "center";
         for (var i = 0; i<2; i++){
-            if (i == 0)
-                $.context.fillStyle='#00f';
-            else
-                $.context.fillStyle='#f00';
             for(var player in $.teams[i]){
                 pos = convertPos($.teams[i][player].x, $.teams[i][player].y, $);
+                $.context.fillStyle = (i==0) ? '#00f' : '#f00';
                 $.context.fillRect(pos[0]-10, pos[1]-10, 20, 20);
+                $.context.fillStyle = (i==0) ? '#f00' : '#00f';
+                $.context.fillText(Number(player)+1, pos[0], pos[1]+5);
             }
             $.context.beginPath();
             var pos = convertPos($.ball.x, $.ball.y, $);
@@ -307,6 +295,12 @@
             $.context.closePath();
             $.context.fill();
         }
+		//scoreboard
+		$.context.font="60px Arial";
+		$.context.fillStyle = '#000';
+		$.context.textAlign= "left";
+		textWidth = $.context.measureText($.score[0]+" ").width + $.context.measureText("-").width / 2;
+		$.context.fillText($.score[0]+" - "+$.score[1], $.canvas.width/2 - textWidth, 50);
     }
 
     function executeAttempts() {
@@ -328,13 +322,62 @@
         }
         $.ball.move();
     }
+	
     function goalScored(team) {
-        $.context.font="60px Arial";
-        $.context.textAlign= "center";
-        $.context.fillText("Team "+team+" WINS", $.canvas.width/2, $.canvas.height/2);
-        $.end = true;
+		$.score[team]++;
+		$.ball = new Ball();
+        initTeam(0);
+		initTeam(1);
+		draw();
     }
-
+	
+	function initMatch(){
+		if(!$.end)return;
+		$.score[0] = 0;
+		$.score[1] = 0;
+		$.ball = new Ball();
+		$.end = false;
+		initTeam(0);
+		initTeam(1);
+		draw();
+		gameLoop();
+	}
+	
+	function endMatch() {
+		if($.end)return;
+		$.end = true;
+		var text, color;
+		if		($.score[0] == $.score[1]){
+			color = '#000';
+			text = "TIE!";
+		}
+		else if	($.score[0] > $.score[1]){
+			color = '#00f';
+			text = "TEAM 0 WIN!";
+		}
+		else if	($.score[0] < $.score[1]){
+			color = '#f00';
+			text = "TEAM 1 WIN!";
+		}
+		setTimeout(function(){
+			$.context.font="100px Arial";
+			$.context.textAlign = "center";
+			$.context.fillStyle = color;
+			$.context.fillText(text, $.canvas.width/2, $.canvas.height/2 + 35);
+		}, $.FRAMEDURATION);
+    }
+	
+	function restartMatch(){
+		if(!$.end)return;
+		$.end = false;
+		gameLoop();
+	}
+	
+	function pauseMatch(){
+		if($.end)return;
+		$.end = true;
+	}
+	
     function gameLoop(){
         step();
         if(!$.end)

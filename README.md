@@ -17,7 +17,7 @@ matchinfo is an object which will contain useful information about the setup of 
 The `turn` function is called once per frame and should return an object with info about what the player will do for that frame, what a player can do will be explained in the next section.  
 The argument is an object which contains all information about the current state of the game, that is position and movement of each player and the ball.
 
-A template for the file you should submit is included in the code (js/testTeam.js).  
+A [template](./AI/template.js) for the file you should submit is included in the [AIs Section](./AI).  
 once you are done writing you AI (or you want to test it), open index.html, select the two AI files and click "Start Game".
 
 the players and the ball always move on the field with a given speed (the number of units that entity moves per frame) and the coordinates start at (0,0) in the top left corner, this means that moving with positive x speed means moving to the right, negative x speed means left, positive y means down and negative y means up.
@@ -75,19 +75,20 @@ this paragraph describes in detail what's in the two objects passed to your func
 * `status.teamStatus[team][player].speedY` speed of the player on team `team` with number `player` on the Y axis
 * `status.teamsStatus[team][player].distance` distance between the player and the ball
 
+
 # Notes
 this sections contains a set of rules and clarification which are not included in the Instructions section
 
 ### Initial positions
 At the beginning of the game, the function init() is called one time for each instance of your player. it should return an array with an X and an Y coordinates which should be a valid starting position for that team.  
 All the positions should be inside the playing field, so both the coordinates will have to be greater than 0, and smaller than the maximum size for that axis.  
-Team0 should begin in the left side of the field, so the the X coordinate should comply with `x<MAXX/2`, on the other hand, the team1 starting X coordinate should be `x>MAXX` because they start on the right side of the field.  
-Please always make sure that your Prototype is able to return correct positions for both sides, otherwise, when someone tries to challenge your AI and uses your file on the other team, the match could not start.
+Team0 should begin in the left side of the field, so the the X coordinate should comply with `x<MAXX/2`, on the other hand, the team1 starting X coordinate should be `x>MAXX/2` because they start on the right side of the field.
+If you set your start position where you aren't allowed, your player will be moved to the closest valid starting point.
 
 ### Oblique speed
-right now there's no check on the actual speed the players are at. they can simply move up to `MAXSPEED` on the x axis and up to `MAXSPEED`on the Y axis in the same frame. that means that moving at full speed in oblique direction is actually faster than going full speed while only moving on an axis. this will be probably fixed sooner or later.  
-The same as above applies to the ball, with `MAXBALLSPEED`
-
+`MAXSPEED` and `MAXBALLSPEED` indicate respectively the maximum player speed and the maximum ball speed. This means when you set speedX and speedY value if 
+<img src="https://latex.codecogs.com/gif.latex?\dpi{100}&space;\sqrt{speedX^2&space;&plus;&space;speedY^2}&space;>&space;maxSpeed" title="sqrt(speedX^2 + speedY^2) > maxSpeed" />
+your speed data will be scaled to keep the direction you want to set, but respecting the maxSpeed limit.
 ### Balancing
 DevSoccer was just finished, and all the constants, that do balance the game, weren't yet tested with a proper team file, hence the game could be unbalanced.  
 Once i get some feedback and some submissions i might balance them to make the game better.
