@@ -150,6 +150,12 @@
         this.distance = Math.sqrt(Math.pow(($.ball.x-this.x), 2) + Math.pow(($.ball.y-this.y), 2));//calculates distance from player to ball
         //checks and adjust speed validity before changing it
         this.modifySpeed = function(deltaX, deltaY){
+			//check if $.MAXVARIATION is respected
+			var delta = {x: deltaX, y: deltaY};
+			delta = getAllowedSpeed(delta, $.MAXVARIATION);
+			deltaX = delta.x;
+			deltaY = delta.y;
+			//check if $.MAXSPEED is respected
 			var speed = {x: this.speedX + deltaX, y: this.speedY + deltaY};
 			speed = getAllowedSpeed(speed, $.MAXSPEED);
 			this.speedX = speed.x;
@@ -167,8 +173,18 @@
             };
         };
         this.move = function () {
-            this.x += this.speedX;
-            this.y += this.speedY;
+			this.x += this.speedX;
+			this.y += this.speedY;
+            //check if player will stay into the field
+			if(this.x < 0 || this.x > $.MAXX){
+				this.x = Math.max(Math.min($.MAXX, this.x), 0);
+				speedX = 0;
+			}
+			if(this.y < 0 || this.y > $.MAXY){
+				this.y = Math.max(Math.min($.MAXY, this.y), 0);
+				speedY = 0;
+			}
+			
             this.distance = Math.sqrt(Math.pow(($.ball.x-this.x), 2) + Math.pow(($.ball.y-this.y), 2));//calculates distance from player to ball
         }
     }
