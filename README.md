@@ -41,7 +41,7 @@ Moving the players is a different story. A player cannot go from standing to his
 To modify the speed of a player, you should set at least one between `player.deltaSpeedX` and `player.deltaSpeedY` in the `turn()` return object.  
 If both of them are left 0, the speed of the player will remain the same as the previous frame.   
 The maximum variation each player can apply to his speed each turn is defined in the match variable `MAXVARIATION`, while the maximum speed he can achieve is defined in the variable `MAXSPEED`  
-If a player tries to move outside the field... he moves out of the field. please try not to overflow the coordinate variables :blue_heart:
+If a player tries to move outside the field when he reach the border he shouldn't be able to continue in that direction.
 
 ### the Goalkeeper
 
